@@ -1,0 +1,59 @@
+.head{
+    background: dodgerblue;
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    display: flex;
+justify-content: space-between;
+
+}
+h1{
+    font-size: 100px;
+    color: white;
+}
+input{
+    width:17cm;
+    height:0.8cm;
+    border-radius: 10px;
+}
+.inn{
+    padding-top: 1cm;
+    display: flex;
+  flex-wrap: wrap;
+    justify-content: center;
+  align-items: center;
+  gap: 0.4cm;
+}
+
+
+
+.inn>div{
+    width:250px;
+    height:320px;
+    justify-content: center;
+    display: flex;
+    background-color: black;
+}
+
+.ui{
+    width:230px;
+    height: 230px;
+    background-color: rgba(40, 39, 39, 0.55);
+    text-align: center;
+    background-image: url(e.jpg);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color:blue;
+    
+
+}
+
+.foot{
+    width:100%;
+    height: 200px;
+    color:white;
+background-color: rgb(2, 2, 48);
+}
