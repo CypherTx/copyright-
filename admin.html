@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4e73df, #1cc88a);
+            color: white;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 50%;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin-top: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5em;
+        }
+
+        input, button {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+        }
+
+        input {
+            background: #fff;
+            color: #333;
+        }
+
+        button {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        .logout-btn {
+            background: #e74a3b;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .video-container {
+            margin-top: 20px;
+        }
+
+        video {
+            width: 50%;
+            height:50%;
+            border-radius: 5px;
+        }
+
+        .video-item {
+            background: white;
+            color: black;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="login-section">
+        <h1>Admin Login</h1>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div class="container" id="admin-section" style="display:none;">
+        <h1>Admin Dashboard</h1>
+        <button class="logout-btn" onclick="logout()">Sign Out</button>
+
+        <h2>Upload Video</h2>
+        <input type="file" id="videoFile" accept="video/*">
+        <button onclick="uploadVideo()">Upload</button>
+
+        <h2>Uploaded Videos</h2>
+        <div id="video-list"></div>
+    </div>
+
+    <script>
+        const adminAccounts = [
+            { username: "Admin1", password: "admin123" },
+            { username: "Admin2", password: "admin234" },
+            { username: "Admin3", password: "admin345" }
+        ];
+
+        let signedInUser = JSON.parse(localStorage.getItem("signedInUser")) || null;
+        let videoList = JSON.parse(localStorage.getItem("videoList")) || [];
+
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const user = adminAccounts.find(u => u.username === username && u.password === password);
+            if (user) {
+                signedInUser = user;
+                localStorage.setItem("signedInUser", JSON.stringify(signedInUser));
+                showAdminPanel();
+            } else {
+                alert("Invalid credentials!");
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("admin-section").style.display = "block";
+            displayVideos();
+        }
+
+        function logout() {
+            localStorage.removeItem("signedInUser");
+            location.reload();
+        }
+
+        function uploadVideo() {
+            const videoFile = document.getElementById("videoFile").files[0];
+
+            if (!videoFile) {
+                alert("Please select a video!");
+                return;
+            }
+
+            const videoURL = URL.createObjectURL(videoFile);
+            const videoData = {
+                id: Date.now(),
+                name: videoFile.name,
+                url: videoURL
+            };
+
+            videoList.push(videoData);
+            localStorage.setItem("videoList", JSON.stringify(videoList));
+            displayVideos();
+        }
+
+        function displayVideos() {
+            const videoContainer = document.getElementById("video-list");
+            videoContainer.innerHTML = "";
+
+            videoList.forEach(video => {
+                const videoItem = document.createElement("div");
+                videoItem.classList.add("video-item");
+
+                const title = document.createElement("h3");
+                title.textContent = video.name;
+
+                const videoElement = document.createElement("video");
+                videoElement.controls = true;
+                videoElement.src = video.url;
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.classList.add("delete-btn");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.onclick = () => deleteVideo(video.id);
+
+                videoItem.appendChild(title);
+                videoItem.appendChild(videoElement);
+                videoItem.appendChild(deleteBtn);
+                videoContainer.appendChild(videoItem);
+            });
+        }
+
+        function deleteVideo(videoId) {
+            videoList = videoList.filter(video => video.id !== videoId);
+            localStorage.setItem("videoList", JSON.stringify(videoList));
+            displayVideos();
+        }
+
+        if (signedInUser) {
+            showAdminPanel();
+        }
+    </script>
+</body>
+</html>
